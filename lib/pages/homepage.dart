@@ -453,7 +453,7 @@ class _HomePageState extends State<HomePage> {
                                   )),
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           SvgPicture.asset(
                             "images/avatar0.svg",
                             height: 100,

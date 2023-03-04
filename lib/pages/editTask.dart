@@ -1,26 +1,35 @@
 import 'package:didit/componets/colors.dart';
 import 'package:didit/componets/textStyles.dart';
+import 'package:didit/models/todo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({super.key});
+class EditTaskPage extends StatefulWidget {
+  final Todo todo;
+  const EditTaskPage({super.key, required this.todo});
 
   @override
-  State<AddTaskPage> createState() => _AddTaskPageState();
+  State<EditTaskPage> createState() => _EditTaskPageState();
 }
 
-class _AddTaskPageState extends State<AddTaskPage> {
+class _EditTaskPageState extends State<EditTaskPage> {
   final TextEditingController _controller = TextEditingController();
   String task = '';
   @override
+  void initState() {
+    String task = widget.todo.todo;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DiditColors.fullBlack,
+      backgroundColor: widget.todo.color,
       appBar: AppBar(
         elevation: 0,
         automaticallyImplyLeading: true,
-        backgroundColor: DiditColors.fullBlack,
+        backgroundColor: widget.todo.color,
+        iconTheme: IconThemeData(color: Colors.black),
         actions: [
           Padding(
             padding: const EdgeInsets.all(6.0),
@@ -55,16 +64,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 decoration: BoxDecoration(
-                    color: task.isEmpty ? Colors.black : Colors.white,
+                    color: task.isEmpty ? widget.todo.color : Colors.black,
                     border: Border.all(
                       width: 2,
-                      color: task.isEmpty ? Colors.white : Colors.black,
+                      color: task.isEmpty ? Colors.black : widget.todo.color,
                     ),
                     borderRadius: BorderRadius.circular(25)),
                 child: Text(
                   'Save',
                   style: DiditTextStyles.bodyStyle.copyWith(
-                      color: task.isEmpty ? Colors.white : Colors.black,
+                      color: task.isEmpty ? Colors.black : widget.todo.color,
                       fontSize: 20),
                 ),
               ),
@@ -79,15 +88,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: TextField(
-                  controller: _controller,
+                child: TextFormField(
+                  // controller: _controller,
                   autofocus: true,
                   maxLength: 50,
+                  initialValue: widget.todo.todo,
                   maxLengthEnforcement: MaxLengthEnforcement.enforced,
                   scrollPhysics: const NeverScrollableScrollPhysics(),
                   style: const TextStyle(
                     fontSize: 40,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                   onChanged: (value) {
                     setState(() {

@@ -2,6 +2,9 @@ import 'package:didit/componets/textStyles.dart';
 import 'package:didit/models/todo.dart';
 import 'package:flutter/material.dart';
 
+import '../pages/addtask.dart';
+import '../pages/editTask.dart';
+
 class TodoCard extends StatefulWidget {
   Todo todo;
   TodoCard({super.key, required this.todo});
@@ -20,7 +23,16 @@ class _TodoCardState extends State<TodoCard> {
           setState(() {
             widget.todo.done = true;
           });
-          print('double tapped');
+        },
+        onLongPress: () {
+          widget.todo.done
+              ? null
+              : Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: ((context) => EditTaskPage(
+                            todo: widget.todo,
+                          ))));
         },
         child: Container(
           width: double.infinity,
