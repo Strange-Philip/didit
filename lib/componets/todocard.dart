@@ -2,6 +2,7 @@ import 'package:didit/componets/textStyles.dart';
 import 'package:didit/models/todo.dart';
 import 'package:flutter/material.dart';
 
+import '../data/constants.dart';
 import '../pages/addtask.dart';
 import '../pages/editTask.dart';
 
@@ -25,20 +26,16 @@ class _TodoCardState extends State<TodoCard> {
           });
         },
         onLongPress: () {
-          widget.todo.done
+          widget.todo.done ==true
               ? null
-              : Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: ((context) => EditTaskPage(
-                            todo: widget.todo,
-                          ))));
+              : Navigator.of(context)
+                  .pushNamed('taskAdd', arguments: widget.todo.id);
         },
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
           decoration: BoxDecoration(
-              color: widget.todo.color,
+              color: hexToColor(widget.todo.color),
               borderRadius: BorderRadius.circular(35)),
           child: Align(
             alignment: Alignment.centerLeft,
@@ -48,7 +45,7 @@ class _TodoCardState extends State<TodoCard> {
               style: DiditTextStyles.bodyStyle.copyWith(
                   fontSize: 28,
                   fontWeight: FontWeight.w500,
-                  decoration: widget.todo.done
+                  decoration: widget.todo.done==true
                       ? TextDecoration.lineThrough
                       : TextDecoration.none),
               textAlign: TextAlign.start,

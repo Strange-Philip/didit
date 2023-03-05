@@ -1,5 +1,8 @@
 import 'package:didit/models/task_data.dart';
+import 'package:didit/pages/addtask.dart';
+import 'package:didit/pages/homepage.dart';
 import 'package:didit/pages/onboardpage.dart';
+import 'package:didit/pages/selectavatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -9,9 +12,7 @@ String? avatar;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefences = await SharedPreferences.getInstance();
-  // ignore: await_only_futures
   avatar = await prefences.getString('avatar');
-  await prefences.setString('intScreen', "");
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
@@ -31,6 +32,14 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
             ),
             home: const OnboardPage(),
+            initialRoute:
+                avatar == "" || avatar == null ? 'onBoard' : 'homepage',
+            routes: {
+              'selectAvatar': (context) => SelectAvatar(),
+              'onBoard': (context) => OnboardPage(),
+              'homepage': (context) => HomePage(),
+              'taskAdd': (context) => AddTaskPage(),
+            },
           );
         });
   }

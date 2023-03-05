@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../componets/colors.dart';
+import '../data/constants.dart';
 import '../models/todo.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,8 +43,19 @@ class _HomePageState extends State<HomePage> {
   ];
   PageController? _pageController;
   int currentIndex = 2;
+  String avatar = '';
+
+  void getImage() async {
+    SharedPreferences prefences = await SharedPreferences.getInstance();
+    avatar = await prefences.getString('avatar')!;
+    print("Avatar here");
+    print(avatar);
+  }
+
   @override
   void initState() {
+    getImage();
+    Provider.of<TaskData>(context, listen: false).getNotes();
     super.initState();
     _pageController = PageController(initialPage: 2);
   }
@@ -74,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                   radius: 30,
                   backgroundColor: DiditColors.fullWhite.withOpacity(0.9),
                   child: SvgPicture.asset(
-                    "images/avatar0.svg",
+                    avatar,
                     height: 40,
                     width: 40,
                     color: DiditColors.fullBlack,
@@ -200,41 +213,75 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Column(
                       children: [
-                        TodoCard(
-                            todo: Todo(
-                                id: 23432,
-                                todo: "build program",
-                                date: DateTime.now(),
-                                done: false,
-                                color: DiditColors.accentBlue)),
-                        TodoCard(
-                            todo: Todo(
-                                id: 4535,
-                                todo: "run",
-                                date: DateTime.now(),
-                                done: true,
-                                color: DiditColors.accentGreen)),
-                        TodoCard(
-                            todo: Todo(
-                                id: 4535,
-                                todo: "run",
-                                date: DateTime.now(),
-                                done: true,
-                                color: DiditColors.accentRed)),
-                        TodoCard(
-                            todo: Todo(
-                                id: 4535,
-                                todo: "dance",
-                                date: DateTime.now(),
-                                done: true,
-                                color: DiditColors.accentOrange)),
-                        TodoCard(
-                            todo: Todo(
-                                id: 4535,
-                                todo: "run",
-                                date: DateTime.now(),
-                                done: false,
-                                color: DiditColors.accentYellow)),
+                        // TodoCard(
+                        //     todo: Todo(
+                        //         id: 23432,
+                        //         todo: "build program",
+                        //         date: DateTime.now(),
+                        //         done: false,
+                        //         color:
+                        //             DiditColors.accentBlue.value.toString())),
+                        // TodoCard(
+                        //     todo: Todo(
+                        //         id: 4535,
+                        //         todo: "run",
+                        //         date: DateTime.now(),
+                        //         done: true,
+                        //         color:
+                        //             DiditColors.accentGreen.value.toString())),
+                        // TodoCard(
+                        //     todo: Todo(
+                        //         id: 4535,
+                        //         todo: "run",
+                        //         date: DateTime.now(),
+                        //         done: true,
+                        //         color: DiditColors.accentRed.value.toString())),
+                        // TodoCard(
+                        //     todo: Todo(
+                        //         id: 4535,
+                        //         todo: "dance",
+                        //         date: DateTime.now(),
+                        //         done: true,
+                        //         color:
+                        //             DiditColors.accentOrange.value.toString())),
+                        // TodoCard(
+                        //     todo: Todo(
+                        //         id: 4535,
+                        //         todo: "run",
+                        //         date: DateTime.now(),
+                        //         done: false,
+                        //         color:
+                        //             DiditColors.accentYellow.value.toString())),
+
+                        Consumer<TaskData>(
+                            builder: (context, noteprovider, child) =>
+                                noteprovider.items.length <= 0
+                                    ? Container()
+                                    : Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.6,
+                                        child: ListView.builder(
+                                            physics: BouncingScrollPhysics(),
+                                            itemCount:
+                                                noteprovider.items.length + 1,
+                                            itemBuilder: (context, index) {
+                                              if (index == 0) {
+                                                return Container();
+                                              } else {
+                                                final i = index - 1;
+                                                final item =
+                                                    noteprovider.items[i];
+                                                return TodoCard(
+                                                    todo: Todo(
+                                                        id: item.id,
+                                                        todo: item.todo,
+                                                        date: item.date,
+                                                        done: item.done,
+                                                        color: item.color));
+                                              }
+                                            }),
+                                      )),
                         Padding(
                           padding: const EdgeInsets.symmetric(
                             vertical: 8,
@@ -431,10 +478,10 @@ class _HomePageState extends State<HomePage> {
                 child: Padding(
                     padding: EdgeInsets.only(
                       top: MediaQuery.of(context).size.height -
-                          MediaQuery.of(context).size.height * 0.6,
+                          MediaQuery.of(context).size.height * 0.55,
                     ),
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.4,
+                      height: MediaQuery.of(context).size.height * 0.45,
                       padding: const EdgeInsets.symmetric(
                           vertical: 20, horizontal: 20),
                       decoration: const BoxDecoration(
@@ -464,7 +511,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const Spacer(),
                           SvgPicture.asset(
-                            "images/avatar0.svg",
+                            avatar,
                             height: 100,
                             width: 100,
                             color: Colors.white,

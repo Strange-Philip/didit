@@ -2,6 +2,7 @@ import 'package:didit/componets/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:didit/pages/homepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../componets/primarybutton.dart';
 import '../componets/textStyles.dart';
 
@@ -14,6 +15,17 @@ class SelectAvatar extends StatefulWidget {
 
 class _SelectAvatarState extends State<SelectAvatar> {
   String avatar = "images/avatar0.svg";
+  void getimage() async {
+    SharedPreferences prefences = await SharedPreferences.getInstance();
+    await prefences.setString('avatar', "images/avatar0.svg");
+  }
+
+  @override
+  void initState() {
+    getimage();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,11 +120,14 @@ class _SelectAvatarState extends State<SelectAvatar> {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 40),
             child: PrimaryButton(
-              ontap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: ((context) => const HomePage())));
+              ontap: () async {
+                SharedPreferences prefences =
+                    await SharedPreferences.getInstance();
+                print(avatar);
+                await prefences.setString('avatar', avatar).then((value) {
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (_) => HomePage()));
+                });
               },
               title: "Continue",
             ),

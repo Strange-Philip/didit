@@ -25,10 +25,8 @@ class _OnboardPageState extends State<OnboardPage> {
           child: PrimaryButton(
               title: "Sign in with Google",
               ontap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: ((context) => const SelectAvatar())));
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (_) => SelectAvatar()));
               }),
         ),
       ),

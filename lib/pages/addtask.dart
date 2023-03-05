@@ -1,7 +1,12 @@
+import 'dart:math';
 import 'package:didit/componets/colors.dart';
 import 'package:didit/componets/textStyles.dart';
+import 'package:didit/models/task_data.dart';
+import 'package:didit/models/todo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../data/constants.dart';
 
 class AddTaskPage extends StatefulWidget {
   const AddTaskPage({super.key});
@@ -13,10 +18,30 @@ class AddTaskPage extends StatefulWidget {
 class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _controller = TextEditingController();
   String task = '';
+  bool firstTime = true;
+  Todo? selectedNote;
+  Color _color = Colors.black;
+  var id;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (firstTime) {
+      id = ModalRoute.of(this.context)!.settings.arguments;
+      if (id != null) {
+        selectedNote =
+            Provider.of<TaskData>(this.context, listen: false).getNote(id);
+
+        _controller.text = selectedNote!.todo;
+        _color = id != null ? hexToColor(selectedNote!.color) : Colors.black;
+      }
+    }
+    firstTime = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: DiditColors.fullBlack,
+      backgroundColor: _color,
       appBar: AppBar(
         elevation: 0,
         automaticallyImplyLeading: true,
@@ -26,48 +51,43 @@ class _AddTaskPageState extends State<AddTaskPage> {
             padding: const EdgeInsets.all(6.0),
             child: GestureDetector(
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: DiditColors.fullWhite,
-                  elevation: 0,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  content: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'New task added!',
-                        style: DiditTextStyles.bodyStyle
-                            .copyWith(color: Colors.black, fontSize: 24),
-                      ),
-                      Icon(
-                        Icons.check_circle,
-                        color: DiditColors.accentGreen,
-                        size: 35,
-                      )
-                    ],
-                  ),
-                ));
+                saveNote(id);
               },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                decoration: BoxDecoration(
-                    color: task.isEmpty ? Colors.black : Colors.white,
-                    border: Border.all(
-                      width: 2,
-                      color: task.isEmpty ? Colors.white : Colors.black,
+              child: id != null
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 10),
+                      decoration: BoxDecoration(
+                          color: task.isEmpty ? _color : Colors.black,
+                          border: Border.all(
+                            width: 2,
+                            color: task.isEmpty ? Colors.black : _color,
+                          ),
+                          borderRadius: BorderRadius.circular(25)),
+                      child: Text(
+                        'Save',
+                        style: DiditTextStyles.bodyStyle.copyWith(
+                            color: task.isEmpty ? Colors.black : _color,
+                            fontSize: 20),
+                      ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 10),
+                      decoration: BoxDecoration(
+                          color: task.isEmpty ? Colors.black : Colors.white,
+                          border: Border.all(
+                            width: 2,
+                            color: task.isEmpty ? Colors.white : Colors.black,
+                          ),
+                          borderRadius: BorderRadius.circular(25)),
+                      child: Text(
+                        'Save',
+                        style: DiditTextStyles.bodyStyle.copyWith(
+                            color: task.isEmpty ? Colors.white : Colors.black,
+                            fontSize: 20),
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(25)),
-                child: Text(
-                  'Save',
-                  style: DiditTextStyles.bodyStyle.copyWith(
-                      color: task.isEmpty ? Colors.white : Colors.black,
-                      fontSize: 20),
-                ),
-              ),
             ),
           )
         ],
@@ -107,5 +127,98 @@ class _AddTaskPageState extends State<AddTaskPage> {
         ),
       ),
     );
+  }
+
+  void saveNote(id) {
+    print('done');
+    String todo = _controller.text.trim();
+    DateTime dateTime;
+    bool done = false;
+    final _random = new Random();
+    List<Color> colorList = [
+      DiditColors.accentBlue,
+      DiditColors.accentGreen,
+      DiditColors.accentLightBlue,
+      DiditColors.accentOrange,
+      DiditColors.accentPink,
+      DiditColors.accentRed,
+      DiditColors.accentYellow
+    ];
+    var element = colorList[_random.nextInt(colorList.length)];
+    Color color = element;
+
+    print('done');
+    print(todo);
+    print("checking : ${color.value.toRadixString(16)}");
+    if (id != null) {
+      // Provider.of<TaskData>(this.context, listen: false).addOrUpdateNote(
+      //     id,
+      //     todo,
+      //     DateTime.now(),
+      //     color.value.toRadixString(16),
+      //     done,
+      //     EditMode.UPDATE);
+      Navigator.pop(this.context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: DiditColors.fullWhite,
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Task edited!',
+              style: DiditTextStyles.bodyStyle
+                  .copyWith(color: Colors.black, fontSize: 24),
+            ),
+            Icon(
+              Icons.check_circle,
+              color: DiditColors.accentGreen,
+              size: 35,
+            )
+          ],
+        ),
+      ));
+    } else {
+      int id = DateTime.now().microsecondsSinceEpoch;
+      print('done');
+      // Provider.of<TaskData>(this.context, listen: false).addOrUpdateNote(
+      //     id,
+      //     todo,
+      //     DateTime.now(),
+      //     color.value.toRadixString(16),
+      //     done,
+      //     EditMode.ADD);
+      print('doneNow');
+      Navigator.of(this.context)
+          .pushReplacementNamed('homepage', arguments: id);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: DiditColors.fullWhite,
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'New task added!',
+              style: DiditTextStyles.bodyStyle
+                  .copyWith(color: Colors.black, fontSize: 24),
+            ),
+            Icon(
+              Icons.check_circle,
+              color: DiditColors.accentGreen,
+              size: 35,
+            )
+          ],
+        ),
+      ));
+      print("Complete");
+    }
   }
 }

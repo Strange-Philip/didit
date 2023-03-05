@@ -4,6 +4,8 @@ import 'package:didit/models/todo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../data/constants.dart';
+
 class EditTaskPage extends StatefulWidget {
   final Todo todo;
   const EditTaskPage({super.key, required this.todo});
@@ -24,11 +26,11 @@ class _EditTaskPageState extends State<EditTaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.todo.color,
+      backgroundColor: hexToColor(widget.todo.color),
       appBar: AppBar(
         elevation: 0,
         automaticallyImplyLeading: true,
-        backgroundColor: widget.todo.color,
+        backgroundColor: hexToColor(widget.todo.color),
         iconTheme: IconThemeData(color: Colors.black),
         actions: [
           Padding(
@@ -64,16 +66,16 @@ class _EditTaskPageState extends State<EditTaskPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 decoration: BoxDecoration(
-                    color: task.isEmpty ? widget.todo.color : Colors.black,
+                    color: task.isEmpty ? hexToColor(widget.todo.color) : Colors.black,
                     border: Border.all(
                       width: 2,
-                      color: task.isEmpty ? Colors.black : widget.todo.color,
+                      color: task.isEmpty ? Colors.black : hexToColor(widget.todo.color),
                     ),
                     borderRadius: BorderRadius.circular(25)),
                 child: Text(
                   'Save',
                   style: DiditTextStyles.bodyStyle.copyWith(
-                      color: task.isEmpty ? Colors.black : widget.todo.color,
+                      color: task.isEmpty ? Colors.black : hexToColor(widget.todo.color),
                       fontSize: 20),
                 ),
               ),

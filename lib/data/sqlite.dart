@@ -18,7 +18,7 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  static Future<List<Map<String, dynamic>>?> getNotedFromDb() async {
+  static Future<List<Map<String, dynamic>>> getNotedFromDb() async {
     final database = await DatabaseHelper.database();
     return database.query("tasks", orderBy: "id DESC");
   }
