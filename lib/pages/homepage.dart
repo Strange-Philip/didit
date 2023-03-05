@@ -1,11 +1,14 @@
-import 'package:didit/componets/colors.dart';
 import 'package:didit/componets/textStyles.dart';
 import 'package:didit/componets/todocard.dart';
+import 'package:didit/data/sqlite.dart';
+import 'package:didit/models/task_data.dart';
 import 'package:didit/pages/addtask.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:provider/provider.dart';
 
+import '../componets/colors.dart';
 import '../models/todo.dart';
 
 class HomePage extends StatefulWidget {
@@ -52,287 +55,339 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: DiditColors.fullBlack,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        toolbarHeight: 70,
-        automaticallyImplyLeading: false,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15, top: 10, bottom: 10),
-            child: GestureDetector(
-              onTap: () {
-                showBtnSheet(context);
-              },
-              child: CircleAvatar(
-                radius: 30,
-                backgroundColor: DiditColors.fullWhite.withOpacity(0.9),
-                child: SvgPicture.asset(
-                  "images/avatar0.svg",
-                  height: 40,
-                  width: 40,
-                  color: DiditColors.fullBlack,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
+    return Consumer<TaskData>(builder: (context, value, child) {
+      return Scaffold(
+        backgroundColor: DiditColors.fullBlack,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          toolbarHeight: 70,
+          automaticallyImplyLeading: false,
+          actions: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Container(
-                height: 60,
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: ListView.builder(
-                      itemCount: dates.length,
-                      physics: const BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            skipFunction(index);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: index == currentIndex ? 25 : 10),
-                            decoration: index == currentIndex
-                                ? BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(25))
-                                : const BoxDecoration(),
-                            child: Text(
-                              dates[index].day == DateTime.now().day
-                                  ? "today"
-                                  : dates[index].day ==
-                                          DateTime.now()
-                                              .subtract(const Duration(days: 1))
-                                              .day
-                                      ? "yesterday"
-                                      : dates[index].day ==
-                                              DateTime.now()
-                                                  .add(const Duration(days: 1))
-                                                  .day
-                                          ? "tomorrow"
-                                          : "${months[dates[index].month - 1].toString()} ${dates[index].day.toString()}  ",
-                              style: DiditTextStyles.bodyStyle.copyWith(
-                                fontSize: 22,
-                                color: index == currentIndex
-                                    ? Colors.black
-                                    : Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
+              padding: const EdgeInsets.only(right: 15, top: 10, bottom: 10),
+              child: GestureDetector(
+                onTap: () {
+                  showBtnSheet(context);
+                },
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundColor: DiditColors.fullWhite.withOpacity(0.9),
+                  child: SvgPicture.asset(
+                    "images/avatar0.svg",
+                    height: 40,
+                    width: 40,
+                    color: DiditColors.fullBlack,
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: onChangedFunction,
-                children: [
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          "images/done.svg",
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          width: MediaQuery.of(context).size.height * 0.3,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          "You’ve Completed\nall tasks today ",
-                          maxLines: 2,
-                          style: DiditTextStyles.bodyStyle.copyWith(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          "images/empty.svg",
-                          height: MediaQuery.of(context).size.height * 0.35,
-                          width: MediaQuery.of(context).size.height * 0.35,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          "No tasks \nadded today",
-                          maxLines: 2,
-                          style: DiditTextStyles.bodyStyle.copyWith(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      TodoCard(
-                          todo: Todo(
-                              id: 23432,
-                              todo: "build program",
-                              date: DateTime.now(),
-                              done: false,
-                              color: DiditColors.accentBlue)),
-                      TodoCard(
-                          todo: Todo(
-                              id: 4535,
-                              todo: "run",
-                              date: DateTime.now(),
-                              done: true,
-                              color: DiditColors.accentGreen)),
-                      TodoCard(
-                          todo: Todo(
-                              id: 4535,
-                              todo: "run",
-                              date: DateTime.now(),
-                              done: true,
-                              color: DiditColors.accentRed)),
-                      TodoCard(
-                          todo: Todo(
-                              id: 4535,
-                              todo: "dance",
-                              date: DateTime.now(),
-                              done: true,
-                              color: DiditColors.accentOrange)),
-                      TodoCard(
-                          todo: Todo(
-                              id: 4535,
-                              todo: "run",
-                              date: DateTime.now(),
-                              done: false,
-                              color: DiditColors.accentYellow)),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                        ),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: ((context) =>
-                                        const AddTaskPage())));
-                          },
-                          child: Container(
-                            height: 70,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 35),
-                            decoration: BoxDecoration(
-                                color: Colors.black,
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
-                                borderRadius: BorderRadius.circular(35)),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Add New Task",
-                                    maxLines: 2,
-                                    style: DiditTextStyles.bodyStyle.copyWith(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  const Icon(
-                                    LineIcons.plus,
-                                    color: Colors.white,
-                                    size: 35,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          "images/future.svg",
-                          height: MediaQuery.of(context).size.height * 0.35,
-                          width: MediaQuery.of(context).size.height * 0.35,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          "Add task\nfor the future",
-                          maxLines: 2,
-                          style: DiditTextStyles.bodyStyle.copyWith(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ),
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: currentIndex == 2
-          ? Container(
-              height: 160,
-              padding: const EdgeInsets.only(left: 20, right: 10, bottom: 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "Completed",
-                      maxLines: 2,
-                      style: DiditTextStyles.bodyStyle.copyWith(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.start,
-                    ),
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Container(
+                  height: 60,
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: ListView.builder(
+                        itemCount: dates.length,
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              skipFunction(index);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: index == currentIndex ? 25 : 10),
+                              decoration: index == currentIndex
+                                  ? BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(25))
+                                  : const BoxDecoration(),
+                              child: Text(
+                                dates[index].day == DateTime.now().day
+                                    ? "today"
+                                    : dates[index].day ==
+                                            DateTime.now()
+                                                .subtract(
+                                                    const Duration(days: 1))
+                                                .day
+                                        ? "yesterday"
+                                        : dates[index].day ==
+                                                DateTime.now()
+                                                    .add(
+                                                        const Duration(days: 1))
+                                                    .day
+                                            ? "tomorrow"
+                                            : "${months[dates[index].month - 1].toString()} ${dates[index].day.toString()}  ",
+                                style: DiditTextStyles.bodyStyle.copyWith(
+                                  fontSize: 22,
+                                  color: index == currentIndex
+                                      ? Colors.black
+                                      : Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
                   ),
-                  Container(
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.65,
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: onChangedFunction,
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            "images/done.svg",
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            width: MediaQuery.of(context).size.height * 0.3,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "You’ve Completed\nall tasks today ",
+                            maxLines: 2,
+                            style: DiditTextStyles.bodyStyle.copyWith(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            "images/empty.svg",
+                            height: MediaQuery.of(context).size.height * 0.35,
+                            width: MediaQuery.of(context).size.height * 0.35,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "No tasks \nadded today",
+                            maxLines: 2,
+                            style: DiditTextStyles.bodyStyle.copyWith(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        TodoCard(
+                            todo: Todo(
+                                id: 23432,
+                                todo: "build program",
+                                date: DateTime.now(),
+                                done: false,
+                                color: DiditColors.accentBlue)),
+                        TodoCard(
+                            todo: Todo(
+                                id: 4535,
+                                todo: "run",
+                                date: DateTime.now(),
+                                done: true,
+                                color: DiditColors.accentGreen)),
+                        TodoCard(
+                            todo: Todo(
+                                id: 4535,
+                                todo: "run",
+                                date: DateTime.now(),
+                                done: true,
+                                color: DiditColors.accentRed)),
+                        TodoCard(
+                            todo: Todo(
+                                id: 4535,
+                                todo: "dance",
+                                date: DateTime.now(),
+                                done: true,
+                                color: DiditColors.accentOrange)),
+                        TodoCard(
+                            todo: Todo(
+                                id: 4535,
+                                todo: "run",
+                                date: DateTime.now(),
+                                done: false,
+                                color: DiditColors.accentYellow)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) =>
+                                          const AddTaskPage())));
+                            },
+                            child: Container(
+                              height: 70,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 35),
+                              decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  border:
+                                      Border.all(color: Colors.white, width: 2),
+                                  borderRadius: BorderRadius.circular(35)),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Add New Task",
+                                      maxLines: 2,
+                                      style: DiditTextStyles.bodyStyle.copyWith(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                    const Icon(
+                                      LineIcons.plus,
+                                      color: Colors.white,
+                                      size: 35,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            "images/future.svg",
+                            height: MediaQuery.of(context).size.height * 0.35,
+                            width: MediaQuery.of(context).size.height * 0.35,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            "Add task\nfor the future",
+                            maxLines: 2,
+                            style: DiditTextStyles.bodyStyle.copyWith(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: currentIndex == 2
+            ? Container(
+                height: MediaQuery.of(context).size.height * 0.18,
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "Completed",
+                        maxLines: 2,
+                        style: DiditTextStyles.bodyStyle.copyWith(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    Container(
+                      height: 70,
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 40),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(35)),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Completed tasks",
+                              maxLines: 2,
+                              style: DiditTextStyles.bodyStyle.copyWith(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.lineThrough),
+                              textAlign: TextAlign.start,
+                            ),
+                            Text(
+                              "23",
+                              maxLines: 2,
+                              style: DiditTextStyles.bodyStyle.copyWith(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.start,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 50),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => const AddTaskPage())));
+                  },
+                  child: Container(
                     height: 70,
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 40),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 35),
                     decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.black,
+                        border: Border.all(width: 2, color: Colors.white),
                         borderRadius: BorderRadius.circular(35)),
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -340,73 +395,27 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Completed tasks",
+                            "Add New Task",
                             maxLines: 2,
                             style: DiditTextStyles.bodyStyle.copyWith(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w500,
-                                decoration: TextDecoration.lineThrough),
+                                color: Colors.white),
                             textAlign: TextAlign.start,
                           ),
-                          Text(
-                            "23",
-                            maxLines: 2,
-                            style: DiditTextStyles.bodyStyle.copyWith(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            textAlign: TextAlign.start,
+                          const Icon(
+                            LineIcons.plus,
+                            color: Colors.white,
+                            size: 35,
                           ),
                         ],
                       ),
                     ),
                   ),
-                ],
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 50),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => const AddTaskPage())));
-                },
-                child: Container(
-                  height: 70,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 35),
-                  decoration: BoxDecoration(
-                      color: Colors.black,
-                      border: Border.all(width: 2, color: Colors.white),
-                      borderRadius: BorderRadius.circular(35)),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Add New Task",
-                          maxLines: 2,
-                          style: DiditTextStyles.bodyStyle.copyWith(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white),
-                          textAlign: TextAlign.start,
-                        ),
-                        const Icon(
-                          LineIcons.plus,
-                          color: Colors.white,
-                          size: 35,
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
               ),
-            ),
-    );
+      );
+    });
   }
 
   void showBtnSheet(BuildContext context) {

@@ -18,7 +18,8 @@ class _OnboardPageState extends State<OnboardPage> {
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(vertical: 50),
         decoration: const BoxDecoration(
-            image: DecorationImage(image: AssetImage('images/onboard.png'))),
+            image: DecorationImage(
+                image: AssetImage('images/onboard.png'), fit: BoxFit.cover)),
         child: Align(
           alignment: Alignment.bottomCenter,
           child: PrimaryButton(

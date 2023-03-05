@@ -38,10 +38,24 @@ dependencies:
   intl: ^0.18.0
   flutter_svg: ^2.0.2
   line_icons: ^2.0.1
+  provider: ^6.0.5
+  shared_preferences: ^2.0.18
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  sqflite: ^2.2.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+#   flutter_launcher_icons: "^0.12.0"
+
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "images/android_icon.png"
+#   image_path_ios : "images/ios_icon.png"
+#   image_path_android : "images/android_icon.png"
+#   adaptive_icon_background : "#000000"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

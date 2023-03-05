@@ -1,8 +1,7 @@
 import 'package:didit/componets/colors.dart';
-import 'package:didit/pages/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:didit/pages/homepage.dart';
 import '../componets/primarybutton.dart';
 import '../componets/textStyles.dart';
 
