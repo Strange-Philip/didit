@@ -1,19 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:hive/hive.dart';
 
-class Todo {
-  int id;
-  String todo;
-  String color;
-  bool done;
-  DateTime date;
+@HiveType(typeId: 0)
+class Todo extends HiveObject {
+    @HiveField(0)
+  late String id;
+  @HiveField(1)
+  late String todo;
 
-  Todo(
-      {required this.id,
-      required this.todo,
-      required this.done,
-      required this.color,
-      required this.date});
+  @HiveField(2)
+  late bool isCompleted;
+
+  @HiveField(3)
+  final DateTime date;
+
+  @HiveField(4)
+  final String color;
+
+  Todo({required this.todo, this.isCompleted = false, required this.date, required this.color,required this.id});
 }
-
-

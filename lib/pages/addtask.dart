@@ -5,6 +5,7 @@ import 'package:didit/models/task_data.dart';
 import 'package:didit/models/todo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import '../data/constants.dart';
 
@@ -22,14 +23,24 @@ class _AddTaskPageState extends State<AddTaskPage> {
   Todo? selectedNote;
   Color _color = Colors.black;
   var id;
+  final todoBox = Hive.box('todos');
+  var colorlist = [
+    '0xffEEF511',
+    '0xff22CD6E',
+    '0xffFF8336',
+    '0xff7187FF',
+    '0xffFA6159',
+    '0xffFF97CA',
+    '0xff9CCEFF'
+  ];
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (firstTime) {
       id = ModalRoute.of(this.context)!.settings.arguments;
       if (id != null) {
-        selectedNote =
-            Provider.of<TaskData>(this.context, listen: false).getNote(id);
+        selectedNote = Provider.of<TaskData>(this.context, listen: false).getNote(id);
 
         _controller.text = selectedNote!.todo;
         _color = id != null ? hexToColor(selectedNote!.color) : Colors.black;
@@ -40,6 +51,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   @override
   Widget build(BuildContext context) {
+    String color = (colorlist.toList()..shuffle()).first;
+
     return Scaffold(
       backgroundColor: _color,
       appBar: AppBar(
@@ -55,8 +68,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
               },
               child: id != null
                   ? Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                       decoration: BoxDecoration(
                           color: task.isEmpty ? _color : Colors.black,
                           border: Border.all(
@@ -66,26 +78,28 @@ class _AddTaskPageState extends State<AddTaskPage> {
                           borderRadius: BorderRadius.circular(25)),
                       child: Text(
                         'Save',
-                        style: DiditTextStyles.bodyStyle.copyWith(
-                            color: task.isEmpty ? Colors.black : _color,
-                            fontSize: 20),
+                        style: DiditTextStyles.bodyStyle
+                            .copyWith(color: task.isEmpty ? Colors.black : _color, fontSize: 20),
                       ),
                     )
-                  : Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 10),
-                      decoration: BoxDecoration(
-                          color: task.isEmpty ? Colors.black : Colors.white,
-                          border: Border.all(
-                            width: 2,
-                            color: task.isEmpty ? Colors.white : Colors.black,
-                          ),
-                          borderRadius: BorderRadius.circular(25)),
-                      child: Text(
-                        'Save',
-                        style: DiditTextStyles.bodyStyle.copyWith(
-                            color: task.isEmpty ? Colors.white : Colors.black,
-                            fontSize: 20),
+                  : GestureDetector(
+                      onTap: () {
+                        todoBox.add(Todo(todo: task, date: DateTime.now(), color: color,id: ''));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        decoration: BoxDecoration(
+                            color: task.isEmpty ? Colors.black : Colors.white,
+                            border: Border.all(
+                              width: 2,
+                              color: task.isEmpty ? Colors.white : Colors.black,
+                            ),
+                            borderRadius: BorderRadius.circular(25)),
+                        child: Text(
+                          'Save',
+                          style: DiditTextStyles.bodyStyle.copyWith(
+                              color: task.isEmpty ? Colors.white : Colors.black, fontSize: 20),
+                        ),
                       ),
                     ),
             ),
@@ -118,8 +132,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Enter new task ',
-                      hintStyle: DiditTextStyles.bodyStyle.copyWith(
-                          color: Colors.white.withOpacity(0.5), fontSize: 40)),
+                      hintStyle: DiditTextStyles.bodyStyle
+                          .copyWith(color: Colors.white.withOpacity(0.5), fontSize: 40)),
                 ),
               ),
             ],
@@ -171,8 +185,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
           children: [
             Text(
               'Task edited!',
-              style: DiditTextStyles.bodyStyle
-                  .copyWith(color: Colors.black, fontSize: 24),
+              style: DiditTextStyles.bodyStyle.copyWith(color: Colors.black, fontSize: 24),
             ),
             Icon(
               Icons.check_circle,
@@ -193,8 +206,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       //     done,
       //     EditMode.ADD);
       print('doneNow');
-      Navigator.of(this.context)
-          .pushReplacementNamed('homepage', arguments: id);
+      Navigator.of(this.context).pushReplacementNamed('homepage', arguments: id);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: DiditColors.fullWhite,
         elevation: 0,
@@ -207,8 +219,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
           children: [
             Text(
               'New task added!',
-              style: DiditTextStyles.bodyStyle
-                  .copyWith(color: Colors.black, fontSize: 24),
+              style: DiditTextStyles.bodyStyle.copyWith(color: Colors.black, fontSize: 24),
             ),
             Icon(
               Icons.check_circle,
