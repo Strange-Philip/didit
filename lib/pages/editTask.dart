@@ -4,8 +4,6 @@ import 'package:didit/models/todo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../data/constants.dart';
-
 class EditTaskPage extends StatefulWidget {
   final Todo todo;
   const EditTaskPage({super.key, required this.todo});
@@ -19,18 +17,18 @@ class _EditTaskPageState extends State<EditTaskPage> {
   String task = '';
   @override
   void initState() {
-    String task = widget.todo.todo;
+    String task = widget.todo.todo!;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: hexToColor(widget.todo.color),
+      backgroundColor: Color(widget.todo.color!),
       appBar: AppBar(
         elevation: 0,
         automaticallyImplyLeading: true,
-        backgroundColor: hexToColor(widget.todo.color),
+        backgroundColor:Color(widget.todo.color!),
         iconTheme: IconThemeData(color: Colors.black),
         actions: [
           Padding(
@@ -66,16 +64,16 @@ class _EditTaskPageState extends State<EditTaskPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 decoration: BoxDecoration(
-                    color: task.isEmpty ? hexToColor(widget.todo.color) : Colors.black,
+                    color: task.isEmpty ?Color(widget.todo.color!): Colors.black,
                     border: Border.all(
                       width: 2,
-                      color: task.isEmpty ? Colors.black : hexToColor(widget.todo.color),
+                      color: task.isEmpty ? Colors.black :Color(widget.todo.color!),
                     ),
                     borderRadius: BorderRadius.circular(25)),
                 child: Text(
                   'Save',
                   style: DiditTextStyles.bodyStyle.copyWith(
-                      color: task.isEmpty ? Colors.black : hexToColor(widget.todo.color),
+                      color: task.isEmpty ? Colors.black : Color(widget.todo.color!),
                       fontSize: 20),
                 ),
               ),

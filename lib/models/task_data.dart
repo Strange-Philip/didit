@@ -8,32 +8,38 @@ import 'package:hive_flutter/adapters.dart';
 class TaskData with ChangeNotifier {
 
   static const boxName = "todos";
-  final Box<Todo> box = Hive.box<Todo>(boxName);
-
-  /// Add new Task
-  Future<void> addTask({required Todo todo}) async {
-    await box.put(todo.id, todo);
+ var hiveBox = Hive.box(boxName);
+  var fuid = "";
+   addTodo(Todo todo) async {
+    var todoMap = todo.toJson();
+    await hiveBox.put(fuid, todoMap);
   }
 
-  /// Show task
-  Future<Todo?> getTask({required String id}) async {
-    return box.get(id);
+  updateTodo(Todo todo) async {
+   var todoMap = todo.toJson();
+    await hiveBox.put(fuid, todoMap);
   }
 
-  /// Update task
-  Future<void> updateTask({required Todo todo}) async {
-    await todo.save();
+  Future<Todo?> getTodo() async {
+    Todo? todo;
+    try {
+      if (fuid != null && fuid != "") {
+        
+        var todoMap = hiveBox.get(fuid);
+        if (todoMap != null) {
+          todo = Todo.fromJson(todoMap);
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    return todo;
   }
 
-  /// Delete task
-  Future<void> dalateTask({required Todo todo}) async {
-    await todo.delete();
+  deleteTodo() async {
+   await hiveBox.delete(fuid);
   }
-
-  // ValueListenable<Box<Todo>> listenToTask() {
-  //   return box.listenable();
-  // }
-
+  
   List _items = [];
 
   List get items {

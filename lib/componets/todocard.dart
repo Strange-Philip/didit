@@ -32,12 +32,12 @@ class _TodoCardState extends State<TodoCard> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
           decoration: BoxDecoration(
-              color: hexToColor(widget.todo.color),
+              color: Color(widget.todo.color!),
               borderRadius: BorderRadius.circular(35)),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              widget.todo.todo,
+              widget.todo.todo!,
               maxLines: 2,
               style: DiditTextStyles.bodyStyle.copyWith(
                   fontSize: 28,

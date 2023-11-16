@@ -1,20 +1,28 @@
-import 'package:hive/hive.dart';
+class Todo {
+  int? id;
+  String? todo;
+  bool? isCompleted;
+  String? date;
+  int? color;
 
-@HiveType(typeId: 0)
-class Todo extends HiveObject {
-    @HiveField(0)
-  late String id;
-  @HiveField(1)
-  late String todo;
+  Todo({this.id, this.todo, this.isCompleted, this.date, this.color});
 
-  @HiveField(2)
-  late bool isCompleted;
+  Todo.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    todo = json['todo'];
+    isCompleted = json['isCompleted'];
+    date = json['date'];
+    color = json['color'];
+  }
+  
 
-  @HiveField(3)
-  final DateTime date;
-
-  @HiveField(4)
-  final String color;
-
-  Todo({required this.todo, this.isCompleted = false, required this.date, required this.color,required this.id});
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['todo'] = this.todo;
+    data['isCompleted'] = this.isCompleted;
+    data['date'] = this.date;
+    data['color'] = this.color;
+    return data;
+  }
 }

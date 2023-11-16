@@ -42,8 +42,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
       if (id != null) {
         selectedNote = Provider.of<TaskData>(this.context, listen: false).getNote(id);
 
-        _controller.text = selectedNote!.todo;
-        _color = id != null ? hexToColor(selectedNote!.color) : Colors.black;
+        _controller.text = selectedNote!.todo!;
+        _color = id != null ? Color(selectedNote!.color!) : Colors.black;
       }
     }
     firstTime = false;
@@ -84,7 +84,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     )
                   : GestureDetector(
                       onTap: () {
-                        todoBox.add(Todo(todo: task, date: DateTime.now(), color: color,id: ''));
+                        todoBox.add(Todo(
+                            todo: task,
+                            date: DateTime.now().toString(),
+                            color: _color.value,
+                            id: 1));
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),

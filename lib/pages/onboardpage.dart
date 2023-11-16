@@ -1,3 +1,4 @@
+import 'package:appwrite/appwrite.dart';
 import 'package:didit/componets/primarybutton.dart';
 import 'package:didit/pages/selectavatar.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,16 @@ class OnboardPage extends StatefulWidget {
 }
 
 class _OnboardPageState extends State<OnboardPage> {
+  @override
+  void initState() {
+  
+Client client = Client();
+client
+    .setEndpoint('https://cloud.appwrite.io/v1')
+    .setProject('6513164593125fc7b1c0')
+    .setSelfSigned(status: true); 
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,12 +1,10 @@
 import 'package:didit/componets/textStyles.dart';
 import 'package:didit/componets/todocard.dart';
-import 'package:didit/models/task_data.dart';
 import 'package:didit/pages/addtask.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../componets/colors.dart';
 import '../models/todo.dart';
@@ -415,8 +413,9 @@ class _HomePageState extends State<HomePage> {
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.45,
                       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                           color: Colors.black,
+                          border: Border.all(width: 2, color: Colors.white),
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(20),
                             topRight: Radius.circular(20),
